@@ -11,17 +11,32 @@ export default class Api {
 
   post(url, object) {
     const request = `${this.apiUrl}${url}`;
-    console.log("request", request);
     return api.post(request, object);
   }
 
   getUser(url, token) {
     const request = `${this.apiUrl}${url}`;
-    return api.post(request, {}, {
-      headers: {
-        Authorization: `bearer ${token}`,
-      },
-    });
+    return api.post(
+      request,
+      {},
+      {
+        headers: {
+          Authorization: `bearer ${token}`,
+        },
+      }
+    );
+  }
+
+  getPerson(id, token) {
+    const request = `${this.apiUrl}/${id}`;
+    return api.get(
+      request,
+      {
+        headers: {
+          Authorization: `bearer ${token.replace(/['"]+/g, "")}`,
+        },
+      }
+    );
   }
 
   persist(url, object, token) {

@@ -1,8 +1,8 @@
 import Api from '../api'
 
-export default class TransactionService extends Api {
+export default class KnowledgeService extends Api {
     constructor() {
-        super('/transactions')
+        super('/knowledge')
     }
 
     save(transaction, token) {

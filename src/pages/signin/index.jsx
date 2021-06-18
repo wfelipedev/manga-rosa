@@ -23,11 +23,10 @@ export default function Signin() {
     username: "",
     password: "",
   });
-
   const { signin, logged } = useAuth();
 
   if (logged) {
-    history.push("/inicio");
+    history.push("/home");
     return null;
   }
 
@@ -107,9 +106,9 @@ export default function Signin() {
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
-                          <EyeOff style={{ color: "#000" }} />
+                          <EyeOff style={{ color: "#c11f94" }} />
                         ) : (
-                          <Eye style={{ color: "#000" }} />
+                          <Eye style={{ color: "#c11f94" }} />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -156,6 +155,7 @@ const useStyles = makeStyles({
     width: "50vw",
     backgroundColor: "#FFF",
     position: "relative",
+    backgroundImage: "linear-gradient(45deg,#8016c1, #c11f94)",
   },
   signinContainer: {
     height: "100vh",
@@ -175,6 +175,8 @@ const useStyles = makeStyles({
   },
   logoText: {
     fontSize: "5rem",
+    fontWeight: "bold",
+    color: "#FFF",
   },
   container: {
     height: "20rem",
@@ -191,23 +193,23 @@ const useStyles = makeStyles({
     width: "100%",
   },
   signin: {
-    color: "#fff",
-    background: "#333",
+    color: "#FFFFFF",
+    background: "#c11f94",
     borderRadius: "0",
     transition: "transform .5s",
     "&:hover": {
       transition: "transform .5s",
-      background: "#404040",
+      background: "#b31085",
     },
   },
   signup: {
     color: "#333",
-    background: "#E4E4E4",
+    background: "#F1F1F1",
     borderRadius: "0",
     transition: "transform .5s",
     "&:hover": {
       transition: "transform .5s",
-      background: "#F1F1F1",
+      background: "#f7ebf1",
     },
   },
 });

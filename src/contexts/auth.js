@@ -1,11 +1,12 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 
-import api from "../app/api";
 import AuthService from "../app/service/auth";
+import PersonService from "../app/service/personService";
 
 const AuthContext = createContext({});
 const service = new AuthService();
+const servicePerson = new PersonService();
 
 export const AuthProvider = ({ children }) => {
   const [logged, setLogged] = useState(
@@ -14,16 +15,21 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("@mangarosa:user"))
   );
+  const [person, setPerson] = useState(
+    JSON.parse(localStorage.getItem("@mangarosa:person"))
+  );
   const history = useHistory();
 
   useEffect(() => {
     const storagedToken = localStorage.getItem("@mangarosa:token");
     const storagedUser = localStorage.getItem("@mangarosa:user");
+    const storagedPerson = localStorage.getItem("@mangarosa:person");
     const storagedLogged = localStorage.getItem("@mangarosa:logged");
 
-    if (storagedToken && storagedLogged && storagedUser) {
+    if (storagedToken && storagedLogged && storagedUser && storagedPerson) {
       setLogged(true);
       setUser(JSON.parse(storagedUser));
+      setPerson(JSON.parse(storagedPerson));
     }
   }, []);
 
@@ -34,26 +40,33 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
-      const user = await service.user(response.data.accessToken);
-
-      setUser(user.data);
-
       if (response.data === null) {
         alert("erro ao fazer Sign in");
         return;
       }
 
+      const user = await service.user(response.data.accessToken);
+
+      const person = await servicePerson.getPersonByUser(
+        user.data.id,
+        response.data.accessToken
+      );
+
+      setUser(user.data);
+      setPerson(person.data);
       setLogged(true);
 
       localStorage.setItem("@mangarosa:logged", true);
       localStorage.setItem("@mangarosa:user", JSON.stringify(user.data));
+      localStorage.setItem("@mangarosa:person", JSON.stringify(person.data));
       localStorage.setItem("@mangarosa:token", response.data.accessToken);
-      if (user.data.role === "employee") {
+      if (user.data.role === "employee" && person.data !== "") {
         history.push("/inicio");
+      } else if (person.data === "") {
+        history.push("/registrar");
       } else if (user.data.role === "admin") {
-        history.push("/registros");
+        history.push("/home");
       }
-      // history.push("/inicio");
     } catch (error) {
       console.log(error);
     }
@@ -67,7 +80,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <>
-      <AuthContext.Provider value={{ logged, user, signin, signout }}>
+      <AuthContext.Provider value={{ logged, user, person, signin, signout }}>
         {children}
       </AuthContext.Provider>
     </>
