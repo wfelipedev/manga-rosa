@@ -17,7 +17,15 @@ export default class AuthService extends Api {
     return this.getUser("/user", token);
   }
 
+  getUserId(id, token) {
+    return this.getUserById(id, token);
+  }
+
   getUsers(token) {
     return this.get("/all", token);
+  }
+
+  update(token) {
+    return this.put("/update", {}, token);
   }
 }

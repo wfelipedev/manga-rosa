@@ -1,26 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Grid, Paper, Typography, makeStyles } from "@material-ui/core";
-import PersonService from "../../../app/service/personService";
 import ModalPerson from "../modalPerson";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
+import clsx from "clsx";
+import moment from "moment";
 
-export default function RegistersData() {
+export default function RegistersData({ people, handlePeople }) {
   const classes = useStyles();
-  const service = new PersonService();
-  const [people, setPeople] = useState([]);
 
-  const handlePeople = () => {
-    var token = localStorage.getItem("@mangarosa:token");
-    service.getAll(token).then((response) => {
-      setPeople(response.data);
+  const success = (error) =>
+    toast.success(error, {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
     });
-  };
 
-  useEffect(() => {
-    handlePeople();
-  }, []);
+  const error = (error) =>
+    toast.error(error, {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
 
   return (
     <div>
+      <ToastContainer />
       <div>
         <Paper square elevation={0} className={classes.containerTitle}>
           <Grid
@@ -36,11 +49,14 @@ export default function RegistersData() {
             <Grid container direction="row" justify="center" item xs={3}>
               <Typography className={classes.title}>Email</Typography>
             </Grid>
-            <Grid container direction="row" justify="center" item xs={3}>
+            <Grid container direction="row" justify="center" item xs={2}>
               <Typography className={classes.title}>CPF</Typography>
             </Grid>
-            <Grid container direction="row" justify="center" item xs={3}>
-              <Typography className={classes.title}>Validar</Typography>
+            <Grid container direction="row" justify="center" item xs={2}>
+              <Typography className={classes.title}>Situação</Typography>
+            </Grid>
+            <Grid container direction="row" justify="center" item xs={2}>
+              <Typography className={classes.title}>Validar/Data</Typography>
             </Grid>
           </Grid>
         </Paper>
@@ -66,22 +82,47 @@ export default function RegistersData() {
               style={{ height: "4rem", width: "100%" }}
             >
               <Grid container direction="row" justify="center" item xs={3}>
-                <Typography style={{ fontWeight: "bold" }}>
-                  {person.name}
-                </Typography>
+                <Typography className={classes.text}>{person.name}</Typography>
               </Grid>
               <Grid container direction="row" justify="center" item xs={3}>
-                <Typography style={{ fontWeight: "bold" }}>
-                  {person.email}
+                <Typography className={classes.text}>{person.email}</Typography>
+              </Grid>
+              <Grid container direction="row" justify="center" item xs={2}>
+                <Typography className={classes.text}>{person.cpf}</Typography>
+              </Grid>
+              <Grid container direction="row" justify="center" item xs={2}>
+                <Typography
+                  className={clsx(
+                    classes.text,
+                    person.status === 0
+                      ? classes.waiting
+                      : person.status === 1
+                      ? classes.validated
+                      : classes.notvalidated
+                  )}
+                >
+                  {person.status === 0
+                    ? "Esperando validação"
+                    : person.status === 1
+                    ? "Validado"
+                    : "Não Validado"}
                 </Typography>
               </Grid>
-              <Grid container direction="row" justify="center" item xs={3}>
-                <Typography style={{ fontWeight: "bold" }}>
-                  {person.cpf}
-                </Typography>
-              </Grid>
-              <Grid container direction="row" justify="center" item xs={3}>
-                <ModalPerson person={person} handlePeople={handlePeople} />
+              <Grid container direction="row" justify="center" item xs={2}>
+                {person.status === 0 ? (
+                  <ModalPerson
+                    person={person}
+                    handlePeople={handlePeople}
+                    success={success}
+                    error={error}
+                  />
+                ) : (
+                  <Typography className={clsx(classes.text, classes.date)}>
+                    {moment(person.validated_at, "YYYY-MM-DDTHH:mm:ssZ").format(
+                      "DD/MM/YYYY HH:mm"
+                    )}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </Paper>
@@ -101,5 +142,20 @@ const useStyles = makeStyles({
     width: "100%",
     marginBottom: "1rem",
     background: "#f1f1f1",
+  },
+  text: {
+    fontWeight: "bold",
+  },
+  validated: {
+    color: "#69F0AE",
+  },
+  notvalidated: {
+    color: "#FF5252",
+  },
+  waiting: {
+    color: "#FF6E40",
+  },
+  date: {
+    color: "#9E9E9E",
   },
 });

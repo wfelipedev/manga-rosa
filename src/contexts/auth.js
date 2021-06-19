@@ -1,8 +1,9 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
-
 import AuthService from "../app/service/auth";
 import PersonService from "../app/service/personService";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
 
 const AuthContext = createContext({});
 const service = new AuthService();
@@ -19,6 +20,17 @@ export const AuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("@mangarosa:person"))
   );
   const history = useHistory();
+
+  const warning = (error) =>
+    toast.error(error, {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
 
   useEffect(() => {
     const storagedToken = localStorage.getItem("@mangarosa:token");
@@ -68,7 +80,7 @@ export const AuthProvider = ({ children }) => {
         history.push("/home");
       }
     } catch (error) {
-      console.log(error);
+      warning("E-mail e/ou Senha inválidos!");
     }
   };
 
@@ -80,6 +92,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <>
+      <ToastContainer />
       <AuthContext.Provider value={{ logged, user, person, signin, signout }}>
         {children}
       </AuthContext.Provider>

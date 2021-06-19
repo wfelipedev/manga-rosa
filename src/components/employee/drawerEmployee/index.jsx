@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import clsx from "clsx";
 import { Link, useHistory } from "react-router-dom";
-import { Clipboard, Home, Users } from "react-feather";
+import { Clipboard, Home } from "react-feather";
 
 export default function DrawerEmployee({ children }) {
   const routeSelected = window.location.toString().split("/").slice(-1)[0];

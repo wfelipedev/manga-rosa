@@ -39,8 +39,22 @@ export default class Api {
     );
   }
 
+  getUserById(id, token) {
+    const request = `${this.apiUrl}/${id}`;
+    return api.get(
+      request,
+      {
+        headers: {
+          Authorization: `bearer ${token.replace(/['"]+/g, "")}`,
+        },
+      }
+    );
+  }
+
   persist(url, object, token) {
     const request = `${this.apiUrl}${url}`;
+    console.clear()
+    console.log(object)
     return api.post(request, object, {
       headers: {
         Authorization: `bearer ${token}`,

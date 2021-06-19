@@ -9,38 +9,65 @@ import {
   Grid,
   TextField,
   DialogTitle,
+  Chip,
 } from "@material-ui/core";
-import {  X } from "react-feather";
+import { X } from "react-feather";
+import PersonService from "../../../app/service/personService";
 import AuthService from "../../../app/service/auth";
 import clsx from "clsx";
+import { useEffect } from "react";
 
-export default function ModalPerson({ person, handlePeople }) {
+export default function ModalPerson({ person, handlePeople, success, error }) {
   const classes = useStyles();
-  const service = new AuthService();
+  const authService = new AuthService();
+  const personService = new PersonService();
   const [open, setOpen] = useState(false);
   const [fullWidth] = useState(true);
   const [maxWidth] = useState("xs");
+  const [knowledges, setKnowledges] = useState([]);
+
+  const handleGetUser = async () => {
+    const token = localStorage.getItem("@mangarosa:token");
+    await authService.getUserId(person.user_id, token).then((response) => {
+      setKnowledges(response.data.knowledges);
+    });
+  };
+
+  useEffect(() => {
+    if (open) handleGetUser();
+  }, [open]);
 
   const handleClickOpen = () => {
     setOpen(true);
+    handleGetUser();
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleSubmit = () => {
-    console.clear();
-    console.log(person);
-    /* const { title, value, category, type } = transaction;
-    const token = localStorage.getItem("@senfinanca:token");
-    service
-      .save({ title, value, category, type }, token)
+  const handleDontValidate = () => {
+    const token = localStorage.getItem("@mangarosa:token");
+    personService
+      .validate(person.user_id, 2, token)
       .then((result) => {
         handlePeople();
         handleClose();
+        success("Não validado com sucesso!");
       })
-      .catch((err) => alert(`Error: ${err}`)); */
+      .catch((err) => error("Erro ao não validar!"));
+  };
+
+  const handleValidate = () => {
+    const token = localStorage.getItem("@mangarosa:token");
+    personService
+      .validate(person.user_id, 1, token)
+      .then((result) => {
+        handlePeople();
+        handleClose();
+        success("Validado com sucesso!");
+      })
+      .catch((err) => error("Erro ao validar!"));
   };
 
   return (
@@ -82,8 +109,9 @@ export default function ModalPerson({ person, handlePeople }) {
             <Grid item xs={12}>
               <TextField
                 id="outlined-basicUsername"
+                disabled
                 variant="outlined"
-                label="Name"
+                label="Nome"
                 name="name"
                 value={person.name}
                 autoComplete="off"
@@ -96,6 +124,7 @@ export default function ModalPerson({ person, handlePeople }) {
             <Grid item xs={12}>
               <TextField
                 id="outlined-basicPassword"
+                disabled
                 variant="outlined"
                 label="Email"
                 name="email"
@@ -109,7 +138,8 @@ export default function ModalPerson({ person, handlePeople }) {
             </Grid>
             <Grid item xs={6}>
               <TextField
-                id="outlined-basicPassword"
+                id="outlined-basicCpf"
+                disabled
                 variant="outlined"
                 label="CPF"
                 name="cpf"
@@ -123,7 +153,8 @@ export default function ModalPerson({ person, handlePeople }) {
             </Grid>
             <Grid item xs={6}>
               <TextField
-                id="outlined-basicPassword"
+                id="outlined-basicPhone"
+                disabled
                 variant="outlined"
                 label="Celular"
                 name="phone_number"
@@ -134,6 +165,30 @@ export default function ModalPerson({ person, handlePeople }) {
                 }}
                 fullWidth
               />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography className={classes.title}>Conhecimentos:</Typography>
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+              item
+              xs={12}
+            >
+              {knowledges !== []
+                ? knowledges.map((knowledge) => {
+                    return (
+                      <Chip
+                        key={knowledge.title}
+                        className={classes.chip}
+                        label={knowledge.title}
+                        variant="outlined"
+                      />
+                    );
+                  })
+                : "Nunhum conhecimento"}
             </Grid>
           </Grid>
         </DialogContent>
@@ -147,14 +202,14 @@ export default function ModalPerson({ person, handlePeople }) {
             xs={12}
           >
             <Button
-              onClick={handleClose}
+              onClick={handleDontValidate}
               className={clsx(classes.button, classes.buttonCancel)}
             >
-              Cancelar
+              Não Validar
             </Button>
             <Button
               id="next"
-              onClick={handleSubmit}
+              onClick={handleValidate}
               className={clsx(classes.button, classes.buttonConfirmation)}
             >
               Validar
@@ -204,7 +259,7 @@ const useStyles = makeStyles((theme) => ({
     height: "3.5rem",
     width: "49%",
     fontWeight: "bold",
-    borderRadius: '0'
+    borderRadius: "0",
   },
   validate: {
     background: "#f7ebf1",
@@ -218,5 +273,13 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       cursor: "pointer",
     },
+  },
+  chip: {
+    color: "#c11f94",
+    marginRight: ".25rem",
+    marginTop: ".5rem",
+  },
+  title: {
+    fontWeight: "bold",
   },
 }));

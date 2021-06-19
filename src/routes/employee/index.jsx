@@ -4,7 +4,7 @@ import { Route, Redirect } from "react-router-dom";
 import { useAuth } from "../../contexts/auth";
 
 export default function EmployeeRoute({ component: Component, ...props }) {
-  const { logged, user, person } = useAuth();
+  const { logged, user } = useAuth();
 
   return (
     <Route

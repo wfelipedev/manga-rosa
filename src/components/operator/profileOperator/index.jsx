@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Grid, Avatar, Chip, makeStyles, Typography } from "@material-ui/core";
 import { useAuth } from "../../../contexts/auth";
 import KnowledgeService from "../../../app/service/knowledgeService";
-import { Edit2, LogOut } from "react-feather";
+import { Edit2} from "react-feather";
 import ModalSignout from "../modalSignout";
+import moment from 'moment'
 
 export default function ProfileOperator() {
   const classes = useStyles();
-  const { user, person, signout } = useAuth();
+  const { user, person } = useAuth();
   const [knowledges, setKnowledges] = useState([]);
   const service = new KnowledgeService();
 
@@ -51,6 +52,9 @@ export default function ProfileOperator() {
         <Avatar className={classes.avatar}>{person.name[0]}</Avatar>
         <Typography className={classes.name}>{person.name}</Typography>
         <Typography className={classes.email}>{person.email}</Typography>
+        <Typography className={classes.date}>
+          Membro desde: {moment(person.created_at, 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY HH:mm')}
+        </Typography>
         <div style={{ position: "relative" }}>
           <div className={classes.edit}>
             <Edit2 size={16} style={{ marginRight: ".5rem" }} />
@@ -63,6 +67,7 @@ export default function ProfileOperator() {
         {knowledges.map((knowledge) => {
           return (
             <Chip
+            key={knowledge.title}
               className={classes.chip}
               label={knowledge.title}
               variant="outlined"
@@ -88,6 +93,10 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
   },
   email: {
+    fontSize: ".8rem",
+    color: "grey",
+  },
+  date: {
     fontSize: ".8rem",
     color: "grey",
     marginBottom: "2rem",

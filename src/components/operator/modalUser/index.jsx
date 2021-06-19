@@ -10,17 +10,21 @@ import {
   TextField,
   Avatar,
   DialogTitle,
+  InputAdornment,
+  IconButton,
 } from "@material-ui/core";
-import { Plus, X } from "react-feather";
+import { Eye, EyeOff, Plus, X } from "react-feather";
 import AuthService from "../../../app/service/auth";
 import clsx from "clsx";
 
-export default function ModalUser() {
+export default function ModalUser({ success, error }) {
   const classes = useStyles();
   const service = new AuthService();
   const [open, setOpen] = useState(false);
   const [fullWidth] = useState(true);
   const [maxWidth] = useState("xs");
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const [user, setUser] = useState({
     username: "",
@@ -43,10 +47,17 @@ export default function ModalUser() {
   const handleSubmit = () => {
     service
       .signup(user)
-      .then((result) => {
+      .then((response) => {
+        console.log(response.data);
         handleClose();
+        success(
+          "Novo usuário cadastrado! Ele ja pode fazer o Sign in para finalizar o cadastro."
+        );
       })
-      .catch((err) => alert(`Error: ${err}`));
+      .catch((err) => {
+        console.log(err);
+        error("Erro ao cadastrar novo usuário!");
+      });
   };
 
   return (
@@ -104,6 +115,7 @@ export default function ModalUser() {
             <Grid item xs={12}>
               <TextField
                 id="outlined-basicPassword"
+                type={showPassword ? "text" : "password"}
                 variant="outlined"
                 placeholder="Senha"
                 name="password"
@@ -113,6 +125,21 @@ export default function ModalUser() {
                   margin: ".25rem 0",
                 }}
                 fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff style={{ color: "#c11f94" }} />
+                        ) : (
+                          <Eye style={{ color: "#c11f94" }} />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
           </Grid>
@@ -149,6 +176,7 @@ export default function ModalUser() {
 const useStyles = makeStyles((theme) => ({
   avatar: {
     background: "#f7ebf1",
+    marginLeft: '.5rem',
     "&:hover": {
       cursor: "pointer",
       transform: "scale(1.05)",
@@ -184,6 +212,6 @@ const useStyles = makeStyles((theme) => ({
     height: "3.5rem",
     width: "49%",
     fontWeight: "bold",
-    borderRadius: '0'
+    borderRadius: "0",
   },
 }));

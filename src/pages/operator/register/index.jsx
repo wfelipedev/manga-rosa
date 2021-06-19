@@ -6,21 +6,27 @@ import {
   Button,
   Chip,
   Typography,
+  Tooltip,
+  InputAdornment,
+  IconButton,
 } from "@material-ui/core";
 import clsx from "clsx";
 import InputMask from "react-input-mask";
+import AuthService from "../../../app/service/auth";
 import PersonService from "../../../app/service/personService";
 import KnowledgeService from "../../../app/service/knowledgeService";
-import { useAuth } from "../../../contexts/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
+import { Eye, EyeOff, Info } from "react-feather";
+import { useHistory } from "react-router-dom";
 
-
-export default function Register() {
+export default function OperatorRegister() {
   const classes = useStyles();
-  const { signout } = useAuth();
+  const history = useHistory();
+  const authService = new AuthService();
   const personService = new PersonService();
   const knowledgeService = new KnowledgeService();
+  const [showPassword, setShowPassword] = useState(false);
   const [knowledges, setKnowledges] = useState([
     "Git",
     "React",
@@ -32,6 +38,7 @@ export default function Register() {
   ]);
   const [myKnowledges, setMyKnowledges] = useState([]);
   const [enabled, setEnabled] = useState(true);
+  const [user, setUser] = useState({ username: "", password: "" });
   const [person, setPerson] = useState({
     name: "",
     email: "",
@@ -50,7 +57,7 @@ export default function Register() {
       progress: undefined,
     });
 
-    const warning = (error) =>
+  const warning = (error) =>
     toast.error(error, {
       position: "bottom-center",
       autoClose: 5000,
@@ -64,6 +71,11 @@ export default function Register() {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setPerson({ ...person, [name]: value });
+  };
+
+  const handleChangeUser = (event) => {
+    const { name, value } = event.target;
+    setUser({ ...user, [name]: value });
   };
 
   const handleKnowledges = (knowledge) => {
@@ -94,26 +106,43 @@ export default function Register() {
     }
   };
 
+  // Metodo exclusivo para criar conta admin e validada para teste
   const handleSubmit = () => {
     if (
+      user.username === "" ||
+      user.password === "" ||
       person.name === "" ||
       person.email === "" ||
       person.cpf === "" ||
       myKnowledges.length === 0
     ) {
-      warning("Preencha todos os campos obrigatórios!")
+      warning("Preencha todos os campos obrigatórios!");
     } else {
-      var token = localStorage.getItem("@mangarosa:token");
-      personService.save(person, token).then((response) => {
-        myKnowledges.map(
-          async (knowledge) =>
-            await knowledgeService.save({ title: knowledge }, token)
-        );
-        success('Todo pronto! Agora você pode entrar normalmente na sua conta.');
-      }).catch((error) => {
-        warning("Erro ao finalizar cadastro da sua conta. CPF já Cadastrado. ")
+      authService.signup(user).then(() => {
+        authService.signin(user).then((response1) => {
+          authService.update(response1.data.accessToken)
+          personService
+            .save(person, response1.data.accessToken)
+            .then((response2) => {
+              personService.validate(1,response2.data.user_id, response1.data.accessToken).then(response=>{
+                myKnowledges.map(
+                  async (knowledge) =>
+                    await knowledgeService.save(
+                      { title: knowledge },
+                      response1.data.accessToken
+                    )
+                );
+                success(
+                  "Todo pronto! Agora você pode entrar normalmente na sua conta."
+                );
+                history.push('/')
+              })
+            })
+            .catch((error) => {
+              warning("Erro ao cadastrar sua conta.");
+            });
+        });
       });
-      signout();
     }
   };
 
@@ -122,10 +151,20 @@ export default function Register() {
       <div className={classes.mainContainer}>
         <div className={classes.subContainer}>
           <Grid container direction="row" justify="center" alignItems="center">
-            <Typography className={classes.title}>
-              {" "}
-              Finalizando seu cadatro
+            <Typography
+              className={classes.title}
+              style={{
+                marginRight: "1rem",
+              }}
+            >
+              Cadastro de Usuário para teste
             </Typography>
+            <Tooltip
+              className={classes.tooltip}
+              title="Página exclusiva para criação de conta teste. (ADMIN)"
+            >
+              <Info size={16} />
+            </Tooltip>
           </Grid>
           <Grid
             container
@@ -140,6 +179,58 @@ export default function Register() {
               justify="center"
               alignItems="center"
             >
+              <TextField
+                id="outlined-basicUsername"
+                required
+                variant="outlined"
+                label="Username"
+                name="username"
+                autoComplete="off"
+                onChange={handleChangeUser}
+                fullWidth
+                style={{
+                  margin: ".25rem 0",
+                  width: "100%",
+                }}
+                error={person.name === "" || person.name === null}
+                helperText={
+                  person.name === "" ? "Este campo é obrigatório!" : null
+                }
+              />
+              <TextField
+                id="outlined-basicPassword"
+                type={showPassword ? "text" : "password"}
+                required
+                variant="outlined"
+                label="Password"
+                name="password"
+                autoComplete="off"
+                onChange={handleChangeUser}
+                fullWidth
+                style={{
+                  margin: ".25rem 0",
+                  width: "100%",
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff style={{ color: "#c11f94" }} />
+                        ) : (
+                          <Eye style={{ color: "#c11f94" }} />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                error={person.name === "" || person.name === null}
+                helperText={
+                  person.name === "" ? "Este campo é obrigatório! A senha deve conter no mínimo 8 caractéres entre letras e números" : null
+                }
+              />
               <TextField
                 id="outlined-basicName"
                 required
@@ -282,7 +373,13 @@ export default function Register() {
                       className={classes.chip}
                       label={know}
                       variant="outlined"
-                      onClick={() => (enabled ? handleKnowledges(know) : warning('Você já escolheu o máximo! Para alterar, clique no x'))}
+                      onClick={() =>
+                        enabled
+                          ? handleKnowledges(know)
+                          : warning(
+                              "Você já escolheu o máximo! Para alterar, clique no x"
+                            )
+                      }
                     />
                   );
                 })}
@@ -294,17 +391,14 @@ export default function Register() {
               justify="space-between"
               alignItems="center"
             >
-              <Button
-                onClick={signout}
-                className={clsx(classes.button, classes.buttonCancel)}
-              >
+              <Button onClick={()=> history.push('/')} className={clsx(classes.button, classes.buttonCancel)}>
                 cancelar
               </Button>
               <Button
                 onClick={handleSubmit}
                 className={clsx(classes.button, classes.buttonDone)}
               >
-                finalizar
+                Cadastrar
               </Button>
             </Grid>
           </Grid>
@@ -382,5 +476,8 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: "bold",
     fontSize: "1rem",
+  },
+  tooltip: {
+    "&:hover": { cursor: "pointer" },
   },
 }));

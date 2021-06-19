@@ -7,10 +7,10 @@ import {
   makeStyles,
   TextField,
   Typography,
+  Tooltip,
 } from "@material-ui/core";
 import clsx from "clsx";
 import { Eye, EyeOff } from "react-feather";
-import AuthService from "../../app/service/auth";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/auth";
 
@@ -18,7 +18,6 @@ export default function Signin() {
   const classes = useStyles();
   const history = useHistory();
   const [showPassword, setShowPassword] = useState(false);
-  const service = new AuthService();
   const [userSignin, setUserSignin] = useState({
     username: "",
     password: "",
@@ -39,19 +38,6 @@ export default function Signin() {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setUserSignin({ ...userSignin, [name]: value });
-  };
-
-  const handleSignup = () => {
-    const { email, username, password } = userSignin;
-    console.log(userSignin);
-    service
-      .signup({ email, username, password })
-      .then((result) => {
-        console.log(result.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   };
 
   return (
@@ -118,6 +104,7 @@ export default function Signin() {
                   margin: ".25rem 0",
                   width: "100%",
                 }}
+                helperText={"A senha deve conter no mínimo 8 caractéres entre letras e números"}
               />
             </div>
             <div>
@@ -131,12 +118,14 @@ export default function Signin() {
                   Entrar
                 </Button>
               </div>
-              <Button
-                className={clsx(classes.button, classes.signup)}
-                onClick={() => handleSignup()}
-              >
-                "Cadastrar-se"
-              </Button>
+              <Tooltip title="Apenas para cadastro de usuário ADMIN e VALIDADO para teste.">
+                <Button
+                  className={clsx(classes.button, classes.signup)}
+                  onClick={() => history.push("/register")}
+                >
+                  Cadastrar-se
+                </Button>
+              </Tooltip>
             </div>
           </Grid>
         </div>

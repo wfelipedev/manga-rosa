@@ -6,11 +6,14 @@ import OperatorRoute from "./operator";
 import EmployeeRoute from "./employee";
 import HomeEmployee from "../pages/employee/home";
 import Register from "../pages/employee/register";
+import OperatorRegister from "../pages/operator/register";
 
 export default function Routes() {
   return (
     <Switch>
       <Route exact path="/" component={Signin} />
+      <Route exact path="/register" component={OperatorRegister} />
+
       <OperatorRoute exact path="/home" component={HomeOperator} />
       <OperatorRoute exact path="/registers" component={Registers} />
 

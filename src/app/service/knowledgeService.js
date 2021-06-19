@@ -5,8 +5,8 @@ export default class KnowledgeService extends Api {
         super('/knowledge')
     }
 
-    save(transaction, token) {
-        return this.persist('/', transaction, token);
+    save(knowledge, token) {
+        return this.persist('/', knowledge, token);
     }
 
     getAll(token) {

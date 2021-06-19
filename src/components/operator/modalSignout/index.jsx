@@ -5,7 +5,6 @@ import {
   DialogContent,
   makeStyles,
   Button,
-  Typography,
   Grid,
   DialogTitle,
 } from "@material-ui/core";
@@ -101,12 +100,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   buttonConfirmation: {
-    backgroundColor: "#F1F8FF",
-    color: "#2196F3",
+    backgroundColor: "#F1F1F1",
+    color: "#c11f94",
     "&:hover": {
       cursor: "pointer",
-      backgroundColor: "#D8EBFF",
-      color: "#2196F3",
+      backgroundColor: "#f7ebf1",
+      color: "#c11f94",
     },
   },
   buttonCancel: {

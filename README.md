@@ -1,70 +1,67 @@
-# Getting Started with Create React App
+## Descrição
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+HR Management - Mesha
+</br>
+</br>
 
-## Available Scripts
+## Technologies used:
 
-In the project directory, you can run:
+<img align="left" alt="React" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/react/react.png" />
+<img align="left" alt="Material-UI" width="26px" src="https://avatars2.githubusercontent.com/u/33663932?s=200&v=4" />
+</br>
+</br>
 
-### `yarn start`
+## Páginas
+  - signIn  
+  - Operator
+    - home - pagina inicial do operador
+    - registers - pagina com lista de pessoas
+    - register - pagina de para o teste. exclusiva para cadastrar usuário admin e validado.
+  - Employee
+    - inicio - pagina inicial do funcionario
+    - registrar - pagina para registrar informações pessoais
+</br>
+</br>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Comandos para instalação
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```bash
+$ yarn - isso ira instalar as dependencias necessarias
+```
+</br>
+</br>
 
-### `yarn test`
+## Comandos para rodar o projeto
+É necessário a API
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Siga todos os passos para intalação das dependências no projeto [mesha-api](https://github.com/wfelipedev/mesha-api).
 
-### `yarn build`
+No projeto mesha-api
+```bash
+$ yarn start:dev
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Agora, no projeto mesha, execute
+```bash
+$ yarn start
+```
+</br>
+</br>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Fluxo
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Na tela de Sign in, clique em 'cadastrar-se' para criar uma conta admin e validada para teste.
+2. Agora você já pode cadastrar novos usuários.
+  2.1. Para cadastrar um novo usuário, vá na aba de registros e clique no '+' 
+  2.2. Quando cadastrar uma nova conta, o usuário já pode fazer Sign in para finalizar o cadastro.
+  2.3. Você pode filtrar a lista de pessoas (por nome, email e cpf) no campo de texto acima da lista.
+  2.4. Nessa mesma página, você pode validar ou não validar pessoas pendentes que já finalizaram o cadastro.
+  2.5. Depois que validar, a pessoa vai poder ver seus pontos em sua pagina inicial. (Na próxima vez que fizer Sign in).
+  2.6. O usuário poderá acompanhar se sua conta foi validada ou não, entrando em seu perfíl.
+</br>
+</br>
 
-### `yarn eject`
+## Stay in touch
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- E-mail - dev.felpz@gmail.com
+- Linkedin - [My Linkedin](https://www.linkedin.com/in/wanderson-felipe-freire-pereira-618654175/)
